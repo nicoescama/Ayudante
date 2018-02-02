@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Ayudante</string>
+    <!-- Strings related to login -->
+    <string name="create_account"><font color="#00ff00">text</font></string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="username">Username</string>
+    <string name="register">Register</string>
+    <string name="back_to_login">Back to Login</string>
+    <string name="intro_text">Welcome you are currently logged in as</string>
+
+</resources>

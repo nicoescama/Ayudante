@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "575395870394",
+    "firebase_url": "https://ayudante-7292e.firebaseio.com",
+    "project_id": "ayudante-7292e",
+    "storage_bucket": "ayudante-7292e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:575395870394:android:1ad7dbfedf08563c",
+        "android_client_info": {
+          "package_name": "com.energismart.ayudante"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "575395870394-4evb3913ppb66gs1k1dal15duo9jurd4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.energismart.ayudante",
+            "certificate_hash": "155938d4abf059e9090b4b469153df0970cfac96"
+          }
+        },
+        {
+          "client_id": "575395870394-t0i0patr1tenpq3af1t7v325qoalukse.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCgJZWeSwc8e-MKtywhvuOMTPsdGC27iEs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "575395870394-t0i0patr1tenpq3af1t7v325qoalukse.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
