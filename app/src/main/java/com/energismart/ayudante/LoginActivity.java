@@ -41,6 +41,7 @@ public class LoginActivity extends AppCompatActivity {
 
     //Declaration Button
     Button buttonLogin;
+    Button buttonRegister;
     //Firebase Auth Object used to login and create users and getting user info
     FirebaseAuth mAuth;
     //Firebase AuthStateListener which will listen for logout login event
@@ -70,10 +71,14 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         };
-        initCreateAccountTextView();
+        //initCreateAccountTextView();
+
         initViews();
 
         //set click event of login button
+
+        hideProgress();
+
         buttonLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -98,13 +103,27 @@ public class LoginActivity extends AppCompatActivity {
                                 //our sign in task is successful but do not launch home Screen Activity from here
                                 //After successful sign in  onAuthStateChanged method get triggered automatically inside
                                 //check for current user and then launch Home Screen Activity
-                                Snackbar.make(buttonLogin, "Successfully logged in", Snackbar.LENGTH_LONG).show();
+                                if(FirebaseAuth.getInstance().getCurrentUser().isEmailVerified()) {
+                                    Snackbar.make(buttonLogin, "Successfully logged in", Snackbar.LENGTH_INDEFINITE).show();
+                                }
+                                else {
+                                    Snackbar.make(buttonLogin, "Please verify email", Snackbar.LENGTH_INDEFINITE).show();
+                                    FirebaseAuth.getInstance().signOut();
+                                }
                             } else {
-                                Snackbar.make(buttonLogin, "Failed to log in", Snackbar.LENGTH_LONG).show();
+                                Snackbar.make(buttonLogin, "Failed to log in", Snackbar.LENGTH_INDEFINITE).show();
                             }
                         }
                     });
                 }
+            }
+        });
+
+        buttonRegister.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -113,17 +132,17 @@ public class LoginActivity extends AppCompatActivity {
 
     //this method used to set Create account TextView text and click event( maltipal colors
     // for TextView yet not supported in Xml so i have done it programmatically)
-    private void initCreateAccountTextView() {
-        TextView textViewCreateAccount = (TextView) findViewById(R.id.textViewCreateAccount);
-        textViewCreateAccount.setText(fromHtml("<font color='#ffffff'>I don't have account yet. </font><font color='#0c0099'>create one</font>"));
-        textViewCreateAccount.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
-                startActivity(intent);
-            }
-        });
-    }
+  //  private void initCreateAccountTextView() {
+      //  TextView textViewCreateAccount = (TextView) findViewById(R.id.textViewCreateAccount);
+      //  textViewCreateAccount.setText(fromHtml("<font color='#ffffff'>I don't have account yet. </font><font color='#0c0099'>create one</font>"));
+      //  textViewCreateAccount.setOnClickListener(new View.OnClickListener() {
+      //      @Override
+      //      public void onClick(View view) {
+      //          Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+        //        startActivity(intent);
+       //     }
+     //   });
+   // }
 
     //this method is used to connect XML views to its Objects
     private void initViews() {
@@ -133,6 +152,7 @@ public class LoginActivity extends AppCompatActivity {
         textInputLayoutPassword = (TextInputLayout) findViewById(R.id.textInputLayoutPassword);
         llProgress = (LinearLayout) findViewById(R.id.llProgress);
         buttonLogin = (Button) findViewById(R.id.buttonLogin);
+        buttonRegister = (Button) findViewById(R.id.buttonRegister);
 
     }
 
@@ -203,7 +223,7 @@ public class LoginActivity extends AppCompatActivity {
 
     //Method to hide progress
     public void hideProgress() {
-        llProgress.setVisibility(View.INVISIBLE);
+        llProgress.setVisibility(View.GONE);
     }
 }
 

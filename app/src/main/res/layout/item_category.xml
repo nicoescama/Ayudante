@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/background_light">
+
+    <TextView
+        android:id="@+id/textoCat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="12dp"
+        android:layout_below="@+id/categoryCat"
+        android:gravity="right"
+        android:text="Texto Frase"
+        android:layout_alignParentRight="true" />
+
+    <TextView
+        android:id="@+id/categoryCat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:gravity="right"
+        android:layout_marginRight="12dp"
+        android:text="Titulo Frase"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#f65034"
+        android:textSize="26sp"
+        android:layout_alignParentRight="true" />
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="4dp"
+        android:layout_marginBottom="2dp"
+        android:layout_marginTop="2dp"
+        android:id="@+id/imageViewCat"
+        android:cropToPadding="false"
+        app:srcCompat="@drawable/logo"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignBottom="@+id/textoCat"
+        android:maxHeight="49dp"
+        android:maxWidth="103dp"
+        android:adjustViewBounds="true"
+        android:layout_alignParentLeft="true" />
+
+</RelativeLayout>

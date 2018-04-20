@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "575395870394-33itf73smkvkornola0mh0g6fvtnd1a9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.energismart.ayudante",
+            "certificate_hash": "6f99e7352176bfcb4b20accdeceacc44630d4b32"
+          }
+        },
+        {
           "client_id": "575395870394-4evb3913ppb66gs1k1dal15duo9jurd4.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

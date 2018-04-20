@@ -3,50 +3,67 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/colorPrimary"
     android:orientation="vertical"
-    tools:context="com.loopwiki.loginregistrationwithfirebase.MainActivity">
+    tools:context="com.energismart.ayudante.MainActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/my_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
+        android:id="@+id/box1"
         android:orientation="vertical">
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="32dp"
-            android:src="@drawable/logo" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+        <Button
+            android:id="@+id/buttonAddTruck"
             android:layout_marginTop="16dp"
-            android:gravity="center"
-            android:text="Welcome you are currently logged in as "
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:layout_width="@dimen/button_width"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:background="@color/colorPrimaryDark"
+            android:text="Agregar camión"
             android:textColor="@android:color/white" />
 
-        <TextView
-            android:id="@+id/textViewEmail"
-            android:layout_width="match_parent"
+        <Button
+            android:id="@+id/buttonTrip"
+            android:layout_marginTop="16dp"
+            android:layout_width="@dimen/button_width"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:gravity="center"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large.Inverse"
+            android:layout_gravity="center_horizontal"
+            android:background="@color/colorPrimaryDark"
+            android:text="Agregar viaje"
+            android:textColor="@android:color/white" />
+
+        <Button
+            android:id="@+id/buttonContinue"
+            android:layout_marginTop="16dp"
+            android:layout_width="@dimen/button_width"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:background="@color/colorPrimaryDark"
+            android:text="Continuar viaje"
             android:textColor="@android:color/white" />
 
         <Button
             android:id="@+id/buttonLogout"
             android:layout_marginTop="16dp"
-            android:layout_width="wrap_content"
+            android:layout_width="@dimen/button_width"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:background="@color/colorAccent"
-            android:text="Logout"
+            android:text="Cerrar sesión"
             android:textColor="@android:color/white" />
 
     </LinearLayout>
+
 </RelativeLayout>

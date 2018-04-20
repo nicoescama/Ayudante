@@ -3,11 +3,44 @@
     <!-- Strings related to login -->
     <string name="create_account"><font color="#00ff00">text</font></string>
     <string name="email">Email</string>
+    <string name="name">Nombre completo</string>
+    <string name="phone">número celular</string>
     <string name="password">Password</string>
     <string name="login">Login</string>
     <string name="username">Username</string>
     <string name="register">Register</string>
     <string name="back_to_login">Back to Login</string>
     <string name="intro_text">Welcome you are currently logged in as</string>
-
+    <string name="title_activity_profile_selec">Seleccione el perfil</string>
+    <string name="conductor">Conductor</string>
+    <string name="dueno">Dueño</string>
+    <string name="license_title">Licencia</string>
+    <string name="newTruck_title">Nuevo camión</string>
+    <string name="administrador">Administrado</string>
+    <string-array name="license_array">
+        <item>C1</item>
+        <item>B2</item>
+        <item>B3</item>
+        <item>C1</item>
+        <item>C2</item>
+        <item>C3</item>
+    </string-array>
+    <string-array name="newTruck_array">
+        <item>Registrar</item>
+        <item>Asociar</item>
+    </string-array>
+    <string name="title_activity_main2">Main2Activity</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="dueTo">Válida hasta: (MM-AAAA)</string>
+    <string name="title_activity_add_truck">AddTruckActivity</string>
+    <string-array name="profile_array">
+        <item>Conductor</item>
+        <item>Dueño</item>
+        <item>Admin</item>
+    </string-array>
+    <string name="profile_title">Perfil</string>
+    <string name="placas_title">Placas</string>
+    <string name="title_activity_continue_trip">ContinueTripActivity</string>
 </resources>
