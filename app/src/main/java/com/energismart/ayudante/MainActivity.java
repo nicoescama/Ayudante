@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,15 +34,12 @@ import java.util.Map;
 
 
 public class MainActivity extends AppCompatActivity{
-    //Deceleration of Email Textview
-    TextView textViewEmail;
-    //Deceleration of logout Button
-    Button buttonLogout;
-    Button buttonAddTruck;
-    Button buttonTrip;
-    Button buttonContinue;
+
+    ImageView logoutImage, addTruckImage, newTripImage, continueTripImage;
     Toolbar myToolbar;
     private DatabaseReference mDatabase;
+
+    ImageView historialImage;
 
 
     //Firebase Auth Object used to login and create users and getting user info
@@ -78,7 +76,7 @@ public class MainActivity extends AppCompatActivity{
             startActivity(intent);
             finish();
         }
-        buttonLogout.setOnClickListener(new View.OnClickListener() {
+        logoutImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mAuth.signOut();
@@ -88,7 +86,7 @@ public class MainActivity extends AppCompatActivity{
             }
         });
 
-        buttonAddTruck.setOnClickListener(new View.OnClickListener() {
+        addTruckImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, AddTruckActivity.class);
@@ -96,7 +94,7 @@ public class MainActivity extends AppCompatActivity{
                 //finish();
             }
         });
-        buttonTrip.setOnClickListener(new View.OnClickListener() {
+        newTripImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 final FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -119,7 +117,7 @@ public class MainActivity extends AppCompatActivity{
                                         camiones.add(camionAct.getKey());
                                     }
                                     if(camiones.isEmpty()){
-                                        Snackbar snackbar = Snackbar.make(buttonContinue, "Debe registrar al menos un vehículo", Snackbar.LENGTH_INDEFINITE)
+                                        Snackbar snackbar = Snackbar.make(newTripImage, "Debe registrar al menos un vehículo", Snackbar.LENGTH_INDEFINITE)
                                                 .setAction("Aceptar", new View.OnClickListener() {
                                                     @Override
                                                     public void onClick(View view) {
@@ -142,7 +140,7 @@ public class MainActivity extends AppCompatActivity{
                             //finish();
                         }
                         else{
-                            Snackbar snackbar = Snackbar.make(buttonContinue, "Ya existe un viaje en curso", Snackbar.LENGTH_INDEFINITE)
+                            Snackbar snackbar = Snackbar.make(newTripImage, "Ya existe un viaje en curso", Snackbar.LENGTH_INDEFINITE)
                                     .setAction("Aceptar", new View.OnClickListener() {
                                         @Override
                                         public void onClick(View view) {
@@ -160,7 +158,7 @@ public class MainActivity extends AppCompatActivity{
                 });
             }
         });
-        buttonContinue.setOnClickListener(new View.OnClickListener() {
+        continueTripImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -179,7 +177,7 @@ public class MainActivity extends AppCompatActivity{
                             //finish();
                         }
                         else{
-                            Snackbar snackbar = Snackbar.make(buttonContinue, "Debe crear primero un viaje", Snackbar.LENGTH_INDEFINITE)
+                            Snackbar snackbar = Snackbar.make(continueTripImage, "Debe crear primero un viaje", Snackbar.LENGTH_INDEFINITE)
                                     .setAction("Aceptar", new View.OnClickListener() {
                                         @Override
                                         public void onClick(View view) {
@@ -200,6 +198,13 @@ public class MainActivity extends AppCompatActivity{
         });
 
 
+        historialImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this,HistorialActivity.class);
+                startActivity(intent);
+            }
+        });
 
     }
 
@@ -243,6 +248,11 @@ public class MainActivity extends AppCompatActivity{
 
 
         }
+        if(id == R.id.action_password){
+            Intent intent = new Intent(MainActivity.this, ChangePasswordActivity.class);
+            startActivity(intent);
+
+        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -250,9 +260,11 @@ public class MainActivity extends AppCompatActivity{
     public void init(){
         myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
 
-        buttonLogout = (Button) findViewById(R.id.buttonLogout);
-        buttonAddTruck = (Button) findViewById(R.id.buttonAddTruck);
-        buttonTrip = (Button) findViewById(R.id.buttonTrip);
-        buttonContinue = (Button) findViewById(R.id.buttonContinue);
+        logoutImage = (ImageView) findViewById(R.id.imageLogout);
+        addTruckImage = (ImageView) findViewById(R.id.imageNewTruck);
+        newTripImage = (ImageView) findViewById(R.id.imageNewTrip);
+        continueTripImage = (ImageView) findViewById(R.id.imageContinueTrip);
+
+        historialImage = (ImageView) findViewById(R.id.photo_historialShow);
     }
 }

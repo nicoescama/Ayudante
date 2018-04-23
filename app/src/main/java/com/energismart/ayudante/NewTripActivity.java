@@ -322,11 +322,31 @@ public class NewTripActivity extends AppCompatActivity{
     public boolean validate(){
         boolean valid=true;
         String anticipo = editTextAnticipo.getText().toString();
+        String fecha = txtDate.getText().toString();
+
         if (anticipo.isEmpty()) {
             valid = false;
             textInputLayoutAnticipo.setError("Agregar anticipo!");
         } else {
             textInputLayoutAnticipo.setError(null);
+        }
+        if(fecha.isEmpty()){
+            valid=false;
+            Snackbar snackbarAdded = Snackbar.make(buttonAdd, "Debe agregar la fecha de inicio", Snackbar.LENGTH_INDEFINITE)
+                    .setActionTextColor(Color.GREEN).setAction("Aceptar", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    finish();
+                                }
+                            }, Snackbar.LENGTH_INDEFINITE);
+                        }
+                    });
+            snackbarAdded.setActionTextColor(Color.RED);
+            snackbarAdded.show();
+            return valid;
         }
 
         return valid;

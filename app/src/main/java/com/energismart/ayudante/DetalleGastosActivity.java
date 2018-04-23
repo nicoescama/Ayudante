@@ -8,6 +8,8 @@ import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -32,7 +34,8 @@ public class DetalleGastosActivity extends AppCompatActivity {
 
 
     Toolbar myToolbar;
-    ImageView backImage;
+    String tripElegidoKey;
+    ImageView getReport;
 
 
     @Override
@@ -41,6 +44,8 @@ public class DetalleGastosActivity extends AppCompatActivity {
         setContentView(R.layout.activity_detalle_gastos);
 
         init();
+        setSupportActionBar(myToolbar);
+
 
         final ArrayList<Category> catList = new ArrayList<Category>();
 
@@ -62,104 +67,207 @@ public class DetalleGastosActivity extends AppCompatActivity {
         final DatabaseReference myRef = database.getReference();
         final String userKey = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-        myRef.child("users").child(userKey).child("currentTrip").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                catList.clear();
-                generalList.clear();
-                for (final DataSnapshot currentTrip : dataSnapshot.getChildren()) {
-                    int conteoAlimentacion=0;
-                    int conteoHospedaje=0;
-                    int conteoPeaje=0;
-                    int conteoGasolina=0;
-                    int conteoOtro=0;
-                    int gastoTHospedaje=0;
-                    int gastoTAlimentacion=0;
-                    int gastoTPeaje=0;
-                    int gastoTGasolina=0;
-                    int gastoTOtro=0;
-                    for (DataSnapshot gasto : currentTrip.child("listaGastos").child("hospedaje").getChildren()) {
-                        String costoGasto = gasto.child("costo").getValue(String.class);
-                        String lugarGasto = gasto.child("lugar").getValue(String.class);
-                        String fecha = gasto.child("fecha").getValue(String.class);
-                        Boolean tieneFoto = gasto.child("foto").getValue(Boolean.class);
-                        String id = gasto.getKey();
-                        conteoHospedaje++;
-                        gastoTHospedaje+=Integer.parseInt(costoGasto);
-                        catList.add(new Category(id, lugarGasto, fecha, costoGasto, hospedajeDraw,"hospedaje",tieneFoto));
-                    }
-                    if(gastoTHospedaje>0) {
-                        generalList.add(new Category("hospedaje", null, null, Integer.toString(gastoTHospedaje), hospedajeDraw, Integer.toString(conteoHospedaje), false));
-                    }
-                    for (DataSnapshot gasto : currentTrip.child("listaGastos").child("gasolina").getChildren()) {
-                        String costoGasto = gasto.child("costo").getValue(String.class);
-                        String galones = gasto.child("galones").getValue(String.class);
-                        String lugarGasto = gasto.child("lugar").getValue(String.class);
-                        Boolean tieneFoto = gasto.child("foto").getValue(Boolean.class);
-                        String fecha = gasto.child("fecha").getValue(String.class);
-                        String id = gasto.getKey();
-                        conteoGasolina++;
-                        gastoTGasolina+=Integer.parseInt(costoGasto);
-                        catList.add(new Category(id, lugarGasto, fecha, costoGasto+"&"+galones, gasolinaDraw,"gasolina",tieneFoto));
-                    }
-                    if(gastoTGasolina>0) {
-                        generalList.add(new Category("gasolina", null, null, Integer.toString(gastoTGasolina), gasolinaDraw, Integer.toString(conteoGasolina), false));
-                    }
+        if(getIntent().getExtras()!=null) {
+            tripElegidoKey = getIntent().getStringExtra("key");
+            getReport = (ImageView)findViewById(R.id.photo_getReporte);
+            getReport.setVisibility(View.VISIBLE);
+            myRef.child("users").child(userKey).child("trips").child(tripElegidoKey).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot currentTrip) {
+                    catList.clear();
+                    generalList.clear();
+              //      for (final DataSnapshot currentTrip : dataSnapshot.getChildren()) {
+                        int conteoAlimentacion = 0;
+                        int conteoHospedaje = 0;
+                        int conteoPeaje = 0;
+                        int conteoGasolina = 0;
+                        int conteoOtro = 0;
+                        int gastoTHospedaje = 0;
+                        int gastoTAlimentacion = 0;
+                        int gastoTPeaje = 0;
+                        int gastoTGasolina = 0;
+                        int gastoTOtro = 0;
+                        for (DataSnapshot gasto : currentTrip.child("listaGastos").child("hospedaje").getChildren()) {
+                            String costoGasto = gasto.child("costo").getValue(String.class);
+                            String lugarGasto = gasto.child("lugar").getValue(String.class);
+                            String fecha = gasto.child("fecha").getValue(String.class);
+                            Boolean tieneFoto = gasto.child("foto").getValue(Boolean.class);
+                            String id = gasto.getKey();
+                            conteoHospedaje++;
+                            gastoTHospedaje += Integer.parseInt(costoGasto);
+                            catList.add(new Category(id, lugarGasto, fecha, costoGasto, hospedajeDraw, "hospedaje", tieneFoto));
+                        }
+                        if (gastoTHospedaje > 0) {
+                            generalList.add(new Category("hospedaje", null, null, Integer.toString(gastoTHospedaje), hospedajeDraw, Integer.toString(conteoHospedaje), false));
+                        }
+                        for (DataSnapshot gasto : currentTrip.child("listaGastos").child("gasolina").getChildren()) {
+                            String costoGasto = gasto.child("costo").getValue(String.class);
+                            String galones = gasto.child("galones").getValue(String.class);
+                            String lugarGasto = gasto.child("lugar").getValue(String.class);
+                            Boolean tieneFoto = gasto.child("foto").getValue(Boolean.class);
+                            String fecha = gasto.child("fecha").getValue(String.class);
+                            String id = gasto.getKey();
+                            conteoGasolina++;
+                            gastoTGasolina += Integer.parseInt(costoGasto);
+                            catList.add(new Category(id, lugarGasto, fecha, costoGasto + "&" + galones, gasolinaDraw, "gasolina", tieneFoto));
+                        }
+                        if (gastoTGasolina > 0) {
+                            generalList.add(new Category("gasolina", null, null, Integer.toString(gastoTGasolina), gasolinaDraw, Integer.toString(conteoGasolina), false));
+                        }
 
-                    for (DataSnapshot gasto : currentTrip.child("listaGastos").child("alimentacion").getChildren()) {
-                        String costoGasto = gasto.child("costo").getValue(String.class);
-                        String lugarGasto = gasto.child("lugar").getValue(String.class);
-                        String fecha = gasto.child("fecha").getValue(String.class);
-                        Boolean tieneFoto = gasto.child("foto").getValue(Boolean.class);
-                        String id = gasto.getKey();
-                        conteoAlimentacion++;
-                        gastoTAlimentacion+=Integer.parseInt(costoGasto);
-                        catList.add(new Category(id, lugarGasto, fecha, costoGasto, alimentacionDraw,"alimentacion",tieneFoto));
-                    }
-                    if(gastoTAlimentacion>0) {
-                        generalList.add(new Category("alimentacion", null, null, Integer.toString(gastoTAlimentacion), alimentacionDraw, Integer.toString(conteoAlimentacion), false));
-                    }
+                        for (DataSnapshot gasto : currentTrip.child("listaGastos").child("alimentacion").getChildren()) {
+                            String costoGasto = gasto.child("costo").getValue(String.class);
+                            String lugarGasto = gasto.child("lugar").getValue(String.class);
+                            String fecha = gasto.child("fecha").getValue(String.class);
+                            Boolean tieneFoto = gasto.child("foto").getValue(Boolean.class);
+                            String id = gasto.getKey();
+                            conteoAlimentacion++;
+                            gastoTAlimentacion += Integer.parseInt(costoGasto);
+                            catList.add(new Category(id, lugarGasto, fecha, costoGasto, alimentacionDraw, "alimentacion", tieneFoto));
+                        }
+                        if (gastoTAlimentacion > 0) {
+                            generalList.add(new Category("alimentacion", null, null, Integer.toString(gastoTAlimentacion), alimentacionDraw, Integer.toString(conteoAlimentacion), false));
+                        }
 
-                    for (DataSnapshot gasto : currentTrip.child("listaGastos").child("otros").getChildren()) {
-                        String costoGasto = gasto.child("costo").getValue(String.class);
-                        String lugarGasto = gasto.child("lugar").getValue(String.class);
-                        String fecha = gasto.child("fecha").getValue(String.class);
-                        String concepto = gasto.child("concepto").getValue(String.class);
-                        Boolean tieneFoto = gasto.child("foto").getValue(Boolean.class);
-                        String id = gasto.getKey();
-                        conteoOtro++;
-                        gastoTOtro+=Integer.parseInt(costoGasto);
-                        catList.add(new Category(id, lugarGasto, fecha, costoGasto, otroDraw,concepto,tieneFoto));
-                    }
-                    if(gastoTOtro>0) {
-                        generalList.add(new Category("otro", null, null, Integer.toString(gastoTOtro), otroDraw, Integer.toString(conteoOtro), false));
-                    }
+                        for (DataSnapshot gasto : currentTrip.child("listaGastos").child("otros").getChildren()) {
+                            String costoGasto = gasto.child("costo").getValue(String.class);
+                            String lugarGasto = gasto.child("lugar").getValue(String.class);
+                            String fecha = gasto.child("fecha").getValue(String.class);
+                            String concepto = gasto.child("concepto").getValue(String.class);
+                            Boolean tieneFoto = gasto.child("foto").getValue(Boolean.class);
+                            String id = gasto.getKey();
+                            conteoOtro++;
+                            gastoTOtro += Integer.parseInt(costoGasto);
+                            catList.add(new Category(id, lugarGasto, fecha, costoGasto, otroDraw, concepto, tieneFoto));
+                        }
+                        if (gastoTOtro > 0) {
+                            generalList.add(new Category("otro", null, null, Integer.toString(gastoTOtro), otroDraw, Integer.toString(conteoOtro), false));
+                        }
 
-                    for (DataSnapshot gasto : currentTrip.child("listaGastos").child("peaje").getChildren()) {
-                        String costoGasto = gasto.child("costo").getValue(String.class);
-                        String lugarGasto = gasto.child("lugar").getValue(String.class);
-                        String fecha = gasto.child("fecha").getValue(String.class);
-                        Boolean tieneFoto = gasto.child("foto").getValue(Boolean.class);
-                        String id = gasto.getKey();
-                        String ejes = gasto.child("ejes").getValue(String.class);
-                        conteoPeaje++;
-                        gastoTPeaje+=Integer.parseInt(costoGasto);
-                        catList.add(new Category(id, lugarGasto, fecha, costoGasto+"&"+ejes, peajeDraw,"peaje",tieneFoto));
-                    }
-                    if(gastoTPeaje>0) {
-                        generalList.add(new Category("peaje", null, null, Integer.toString(gastoTPeaje), peajeDraw, Integer.toString(conteoPeaje), false));
-                    }
+                        for (DataSnapshot gasto : currentTrip.child("listaGastos").child("peaje").getChildren()) {
+                            String costoGasto = gasto.child("costo").getValue(String.class);
+                            String lugarGasto = gasto.child("lugar").getValue(String.class);
+                            String fecha = gasto.child("fecha").getValue(String.class);
+                            Boolean tieneFoto = gasto.child("foto").getValue(Boolean.class);
+                            String id = gasto.getKey();
+                            String ejes = gasto.child("ejes").getValue(String.class);
+                            conteoPeaje++;
+                            gastoTPeaje += Integer.parseInt(costoGasto);
+                            catList.add(new Category(id, lugarGasto, fecha, costoGasto + "&" + ejes, peajeDraw, "peaje", tieneFoto));
+                        }
+                        if (gastoTPeaje > 0) {
+                            generalList.add(new Category("peaje", null, null, Integer.toString(gastoTPeaje), peajeDraw, Integer.toString(conteoPeaje), false));
+                        }
 
+                  //  }
+                    AdapterCategory adapter = new AdapterCategory(DetalleGastosActivity.this, generalList);
+                    lvGeneral.setAdapter(adapter);
                 }
-                AdapterCategory adapter = new AdapterCategory(DetalleGastosActivity.this, generalList);
-                lvGeneral.setAdapter(adapter);
 
-            }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                }
+            });
+        }
+        else {
+            myRef.child("users").child(userKey).child("currentTrip").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    catList.clear();
+                    generalList.clear();
+                    for (final DataSnapshot currentTrip : dataSnapshot.getChildren()) {
+                        int conteoAlimentacion = 0;
+                        int conteoHospedaje = 0;
+                        int conteoPeaje = 0;
+                        int conteoGasolina = 0;
+                        int conteoOtro = 0;
+                        int gastoTHospedaje = 0;
+                        int gastoTAlimentacion = 0;
+                        int gastoTPeaje = 0;
+                        int gastoTGasolina = 0;
+                        int gastoTOtro = 0;
+                        for (DataSnapshot gasto : currentTrip.child("listaGastos").child("hospedaje").getChildren()) {
+                            String costoGasto = gasto.child("costo").getValue(String.class);
+                            String lugarGasto = gasto.child("lugar").getValue(String.class);
+                            String fecha = gasto.child("fecha").getValue(String.class);
+                            Boolean tieneFoto = gasto.child("foto").getValue(Boolean.class);
+                            String id = gasto.getKey();
+                            conteoHospedaje++;
+                            gastoTHospedaje += Integer.parseInt(costoGasto);
+                            catList.add(new Category(id, lugarGasto, fecha, costoGasto, hospedajeDraw, "hospedaje", tieneFoto));
+                        }
+                        if (gastoTHospedaje > 0) {
+                            generalList.add(new Category("hospedaje", null, null, Integer.toString(gastoTHospedaje), hospedajeDraw, Integer.toString(conteoHospedaje), false));
+                        }
+                        for (DataSnapshot gasto : currentTrip.child("listaGastos").child("gasolina").getChildren()) {
+                            String costoGasto = gasto.child("costo").getValue(String.class);
+                            String galones = gasto.child("galones").getValue(String.class);
+                            String lugarGasto = gasto.child("lugar").getValue(String.class);
+                            Boolean tieneFoto = gasto.child("foto").getValue(Boolean.class);
+                            String fecha = gasto.child("fecha").getValue(String.class);
+                            String id = gasto.getKey();
+                            conteoGasolina++;
+                            gastoTGasolina += Integer.parseInt(costoGasto);
+                            catList.add(new Category(id, lugarGasto, fecha, costoGasto + "&" + galones, gasolinaDraw, "gasolina", tieneFoto));
+                        }
+                        if (gastoTGasolina > 0) {
+                            generalList.add(new Category("gasolina", null, null, Integer.toString(gastoTGasolina), gasolinaDraw, Integer.toString(conteoGasolina), false));
+                        }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
+                        for (DataSnapshot gasto : currentTrip.child("listaGastos").child("alimentacion").getChildren()) {
+                            String costoGasto = gasto.child("costo").getValue(String.class);
+                            String lugarGasto = gasto.child("lugar").getValue(String.class);
+                            String fecha = gasto.child("fecha").getValue(String.class);
+                            Boolean tieneFoto = gasto.child("foto").getValue(Boolean.class);
+                            String id = gasto.getKey();
+                            conteoAlimentacion++;
+                            gastoTAlimentacion += Integer.parseInt(costoGasto);
+                            catList.add(new Category(id, lugarGasto, fecha, costoGasto, alimentacionDraw, "alimentacion", tieneFoto));
+                        }
+                        if (gastoTAlimentacion > 0) {
+                            generalList.add(new Category("alimentacion", null, null, Integer.toString(gastoTAlimentacion), alimentacionDraw, Integer.toString(conteoAlimentacion), false));
+                        }
+
+                        for (DataSnapshot gasto : currentTrip.child("listaGastos").child("otros").getChildren()) {
+                            String costoGasto = gasto.child("costo").getValue(String.class);
+                            String lugarGasto = gasto.child("lugar").getValue(String.class);
+                            String fecha = gasto.child("fecha").getValue(String.class);
+                            String concepto = gasto.child("concepto").getValue(String.class);
+                            Boolean tieneFoto = gasto.child("foto").getValue(Boolean.class);
+                            String id = gasto.getKey();
+                            conteoOtro++;
+                            gastoTOtro += Integer.parseInt(costoGasto);
+                            catList.add(new Category(id, lugarGasto, fecha, costoGasto, otroDraw, concepto, tieneFoto));
+                        }
+                        if (gastoTOtro > 0) {
+                            generalList.add(new Category("otro", null, null, Integer.toString(gastoTOtro), otroDraw, Integer.toString(conteoOtro), false));
+                        }
+
+                        for (DataSnapshot gasto : currentTrip.child("listaGastos").child("peaje").getChildren()) {
+                            String costoGasto = gasto.child("costo").getValue(String.class);
+                            String lugarGasto = gasto.child("lugar").getValue(String.class);
+                            String fecha = gasto.child("fecha").getValue(String.class);
+                            Boolean tieneFoto = gasto.child("foto").getValue(Boolean.class);
+                            String id = gasto.getKey();
+                            String ejes = gasto.child("ejes").getValue(String.class);
+                            conteoPeaje++;
+                            gastoTPeaje += Integer.parseInt(costoGasto);
+                            catList.add(new Category(id, lugarGasto, fecha, costoGasto + "&" + ejes, peajeDraw, "peaje", tieneFoto));
+                        }
+                        if (gastoTPeaje > 0) {
+                            generalList.add(new Category("peaje", null, null, Integer.toString(gastoTPeaje), peajeDraw, Integer.toString(conteoPeaje), false));
+                        }
+
+                    }
+                    AdapterCategory adapter = new AdapterCategory(DetalleGastosActivity.this, generalList);
+                    lvGeneral.setAdapter(adapter);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                }
+            });
+        }
 
         lvGeneral.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -284,22 +392,26 @@ public class DetalleGastosActivity extends AppCompatActivity {
                 //Toast.makeText(getApplicationContext(),"Position :"+position+"  ListItem : " +id +" queEs"+elegida.getCategoryId(), Toast.LENGTH_LONG).show();
             }
         });
+    }
 
-        backImage.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        Intent intent = new Intent(DetalleGastosActivity.this, ContinueTripActivity.class);
-                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                        startActivity(intent);
-                                        finish();
-                                    }
-                                }
-        );
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_detalle, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_back_detalle) {
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     public void init(){
         myToolbar = (Toolbar) findViewById(R.id.my_toolbarDG);
-        backImage = (ImageView) findViewById(R.id.photo_DetalleBack);
 
         setSupportActionBar(myToolbar);
         getSupportActionBar().setSubtitle("Destino");

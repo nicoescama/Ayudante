@@ -2,19 +2,26 @@ package com.energismart.ayudante;
 
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.FileProvider;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.text.format.Time;
 import android.view.ContextThemeWrapper;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -48,9 +55,8 @@ import java.util.Map;
 public class AddGasolinaActivity extends AppCompatActivity {
 
     ImageView addImage;
-    ImageView cancelImage;
     ImageView fechaImage;
-    ImageView photoImage;
+    ImageView photoImage,photoTomada;
     EditText lugar, costo, galones;
     TextView fechaTextView;
 
@@ -60,6 +66,8 @@ public class AddGasolinaActivity extends AppCompatActivity {
     String costoChange, lugarChange, fechaChange,idChange,galonesChange;
     boolean isChange=false;
 
+    Toolbar myToolbar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,18 +75,14 @@ public class AddGasolinaActivity extends AppCompatActivity {
 
         init();
 
+
+        setSupportActionBar(myToolbar);
+
         mCurrentPhotoPath="";
 
         if(getIntent().getExtras()!=null){
             updateFields();
         }
-
-        cancelImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
-        });
 
         fechaImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -227,22 +231,117 @@ public class AddGasolinaActivity extends AppCompatActivity {
 
     }
 
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_agregar_gasto, menu);
+        if(getIntent().getExtras()!=null){
+            MenuItem borrarItem = menu.findItem(R.id.action_delete_agregarGasto);
+            borrarItem.setVisible(true);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_back_agregarGasto) {
+            finish();
+        }
+        if (id == R.id.action_delete_agregarGasto){
+
+            final AlertDialog.Builder builder;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                builder = new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert);
+            } else {
+                builder = new AlertDialog.Builder(this);
+            }
+            builder.setTitle("Eliminar gasto")
+                    .setMessage("Se eliminará gasto")
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            final DatabaseReference myRef = FirebaseDatabase.getInstance().getReference();
+                            final String userKey = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                            final List<String> tripsGastos = new ArrayList<String>();
+                            final List<String> tripKey = new ArrayList<String>();
+                            final int gasto = Integer.parseInt(costoChange);
+                            final List<String> gastoAcumString = new ArrayList<String>();
+                            myRef.child("users").child(userKey).child("currentTrip").addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    for (DataSnapshot oneTrip : dataSnapshot.getChildren()) {
+                                        tripsGastos.add(oneTrip.child("gastos").getValue(String.class));
+                                        tripKey.add(oneTrip.getKey());
+                                        int gastoAcum = Integer.parseInt(tripsGastos.get(0));
+                                        gastoAcum = gastoAcum - gasto;
+                                        gastoAcumString.add(Integer.toString(gastoAcum));
+                                    }
+                                    String tKey = tripKey.get(0);
+
+
+                                    myRef.child("users").child(userKey).child("currentTrip").child(tKey).child("listaGastos").child("gasolina").child(idChange).removeValue();
+                                    myRef.child("users").child(userKey).child("currentTrip").child(tKey).child("gastos").setValue(gastoAcumString.get(0));
+                                    myRef.child("users").child(userKey).child("trips").child(tKey).child("gastos").setValue(gastoAcumString.get(0));
+                                    myRef.child("users").child(userKey).child("trips").child(tKey).child("listaGastos").child("gasolina").child(idChange).removeValue();
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            });
+                            Intent intent = new Intent(AddGasolinaActivity.this, ContinueTripActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivity(intent);
+                            finish();
+
+                        }
+                    })
+                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            //do nothing
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert);
+            builder.show();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     public void init(){
         addImage = (ImageView) findViewById(R.id.photo_confirmGasolina);
-        cancelImage = (ImageView) findViewById(R.id.photo_cancelGasolina);
         fechaImage = (ImageView) findViewById(R.id.today_gasolina);
         photoImage = (ImageView) findViewById(R.id.photo_gasolina);
+        photoTomada = (ImageView) findViewById(R.id.photo_gasolinaTomada);
         lugar = (EditText) findViewById(R.id.editTextLugarGasolina);
         costo = (EditText) findViewById(R.id.editTextCostoGasolina);
         galones = (EditText) findViewById(R.id.editTextGalonesGasolina);
         fechaTextView = (TextView) findViewById(R.id.textViewDateNG);
+
+        myToolbar = (Toolbar) findViewById(R.id.my_toolbarAddGasolina);
+
+        setSupportActionBar(myToolbar);
+        getSupportActionBar().setSubtitle("Agregar gasto");
+        getSupportActionBar().setTitle("Gasolina");
     }
 
-    public boolean validate(){
+    public boolean validate() {
         boolean pasa = true;
+        String lugarAc = lugar.getText().toString();
+        String gasto = costo.getText().toString();
+        String fecha = fechaTextView.getText().toString();
 
-
-        return pasa;
+        if (lugarAc.isEmpty() || gasto.isEmpty() || fecha.isEmpty()) {
+            Snackbar snackbar = Snackbar.make(addImage, "Completar los espacios solicitados", Snackbar.LENGTH_INDEFINITE)
+                    .setAction("Aceptar", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                        }
+                    });
+            snackbar.setActionTextColor(Color.RED);
+            snackbar.show();
+            pasa = false;
+        }
+        return  pasa;
     }
 
     public void updateFields(){
@@ -335,8 +434,8 @@ public class AddGasolinaActivity extends AppCompatActivity {
                     bitmapPic.compress(Bitmap.CompressFormat.PNG, 0 /* Ignored for PNGs */, blob);
                     byte[] bitmapdata = blob.toByteArray();
                     Bitmap myBitmap = BitmapFactory.decodeByteArray(bitmapdata, 0, bitmapdata.length);
-                    photoImage.setImageBitmap(myBitmap);
-                }
+                    photoTomada.setVisibility(View.VISIBLE);
+                    photoTomada.setImageBitmap(myBitmap);                }
             }
         }
     }

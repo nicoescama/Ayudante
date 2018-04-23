@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.energismart.ayudante.DetalleGastosActivity">
+    tools:context="com.energismart.ayudante.DetalleGastosActivity"
+    android:orientation="vertical">
+
 
 
     <android.support.v7.widget.Toolbar
@@ -17,6 +19,12 @@
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
 
 
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
     <ListView
         android:layout_width="match_parent"
         android:layout_below="@+id/my_toolbarDG"
@@ -25,7 +33,6 @@
 
     <View
         android:layout_width="fill_parent"
-        android:layout_below="@+id/listViewGeneral"
         android:layout_height="6dip"
         android:layout_marginTop="12dp"
         android:layout_marginBottom="12dp"
@@ -34,20 +41,21 @@
 
     <ListView
         android:layout_width="match_parent"
-        android:layout_below="@+id/lineaSeparadora"
         android:layout_height="wrap_content"
         android:id="@+id/listViewDG" />
 
+    </LinearLayout>
+
     <ImageView
-        android:id="@+id/photo_DetalleBack"
+        android:id="@+id/photo_getReporte"
         android:adjustViewBounds="true"
         android:layout_gravity="center"
-        android:layout_below="@id/listViewDG"
+        android:visibility="gone"
         android:layout_centerHorizontal="true"
         android:layout_width="wrap_content"
         android:layout_margin="16dp"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/ic_arrow_back_black_48dp" />
+        app:srcCompat="@drawable/ic_get_app_black_48dp" />
 
     <!--
     <Button
@@ -64,4 +72,5 @@
         android:textColor="@android:color/white" />
 
     -->
-</RelativeLayout>
+
+</LinearLayout>

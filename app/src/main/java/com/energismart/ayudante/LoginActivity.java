@@ -1,6 +1,8 @@
 package com.energismart.ayudante;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.media.Image;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -12,6 +14,7 @@ import android.text.Spanned;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -40,8 +43,9 @@ public class LoginActivity extends AppCompatActivity {
     LinearLayout llProgress;
 
     //Declaration Button
-    Button buttonLogin;
-    Button buttonRegister;
+    ImageView loginImage;
+    ImageView registerImage;
+    Button getPassword;
     //Firebase Auth Object used to login and create users and getting user info
     FirebaseAuth mAuth;
     //Firebase AuthStateListener which will listen for logout login event
@@ -79,7 +83,7 @@ public class LoginActivity extends AppCompatActivity {
 
         hideProgress();
 
-        buttonLogin.setOnClickListener(new View.OnClickListener() {
+        loginImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -87,7 +91,7 @@ public class LoginActivity extends AppCompatActivity {
                 if (validate()) {
                     //show Progress to user and disable button until we can verify credentials with firebase
                     showProgress();
-                    buttonLogin.setEnabled(false);
+                    loginImage.setEnabled(false);
                     //Get values from EditText fields
                     String Email = editTextEmail.getText().toString();
                     String Password = editTextPassword.getText().toString();
@@ -98,20 +102,20 @@ public class LoginActivity extends AppCompatActivity {
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             //hide progress on task is complete and enable button
                             hideProgress();
-                            buttonLogin.setEnabled(true);
+                            loginImage.setEnabled(true);
                             if (task.isSuccessful()) {
                                 //our sign in task is successful but do not launch home Screen Activity from here
                                 //After successful sign in  onAuthStateChanged method get triggered automatically inside
                                 //check for current user and then launch Home Screen Activity
                                 if(FirebaseAuth.getInstance().getCurrentUser().isEmailVerified()) {
-                                    Snackbar.make(buttonLogin, "Successfully logged in", Snackbar.LENGTH_INDEFINITE).show();
+                                    Snackbar.make(loginImage, "Se inició sesión", Snackbar.LENGTH_INDEFINITE).show();
                                 }
                                 else {
-                                    Snackbar.make(buttonLogin, "Please verify email", Snackbar.LENGTH_INDEFINITE).show();
+                                    Snackbar.make(loginImage, "Por favor verificar correo", Snackbar.LENGTH_INDEFINITE).show();
                                     FirebaseAuth.getInstance().signOut();
                                 }
                             } else {
-                                Snackbar.make(buttonLogin, "Failed to log in", Snackbar.LENGTH_INDEFINITE).show();
+                                Snackbar.make(loginImage, "No se pudo iniciar sesión", Snackbar.LENGTH_INDEFINITE).show();
                             }
                         }
                     });
@@ -119,11 +123,46 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        buttonRegister.setOnClickListener(new View.OnClickListener() {
+        registerImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
                 startActivity(intent);
+            }
+        });
+
+        getPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirebaseAuth auth = FirebaseAuth.getInstance();
+
+                String correoE = editTextEmail.getText().toString();
+
+                if (!android.util.Patterns.EMAIL_ADDRESS.matcher(correoE).matches()) {
+                    textInputLayoutEmail.setError("Escribir el correo electrónico asociado");
+                } else {
+                    textInputLayoutEmail.setError(null);
+                    auth.sendPasswordResetEmail(correoE)
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        Snackbar snackbar = Snackbar.make(getPassword, "Se ha enviado un correo para reestablecer", Snackbar.LENGTH_INDEFINITE)
+                                                .setAction("Aceptar", new View.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(View view) {
+                                                        FirebaseAuth.getInstance().signOut();
+                                                        finish();
+                                                    }
+                                                });
+                                        snackbar.setActionTextColor(Color.BLUE);
+                                        snackbar.show();
+                                    }
+                                }
+                            });
+                }
+
+
             }
         });
 
@@ -151,8 +190,9 @@ public class LoginActivity extends AppCompatActivity {
         textInputLayoutEmail = (TextInputLayout) findViewById(R.id.textInputLayoutEmail);
         textInputLayoutPassword = (TextInputLayout) findViewById(R.id.textInputLayoutPassword);
         llProgress = (LinearLayout) findViewById(R.id.llProgress);
-        buttonLogin = (Button) findViewById(R.id.buttonLogin);
-        buttonRegister = (Button) findViewById(R.id.buttonRegister);
+        loginImage = (ImageView) findViewById(R.id.photo_login);
+        registerImage = (ImageView) findViewById(R.id.photo_register);
+        getPassword =(Button) findViewById(R.id.buttonGetPassword);
 
     }
 
@@ -179,7 +219,7 @@ public class LoginActivity extends AppCompatActivity {
         //Handling validation for Email field
         if (!android.util.Patterns.EMAIL_ADDRESS.matcher(Email).matches()) {
             valid = false;
-            textInputLayoutEmail.setError("Please enter valid email!");
+            textInputLayoutEmail.setError("Por favor ingresar correo válido!");
         } else {
             valid = true;
             textInputLayoutEmail.setError(null);
@@ -188,14 +228,14 @@ public class LoginActivity extends AppCompatActivity {
         //Handling validation for Password field
         if (Password.isEmpty()) {
             valid = false;
-            textInputLayoutPassword.setError("Please enter valid password!");
+            textInputLayoutPassword.setError("Por favor ingrese una contraseña");
         } else {
             if (Password.length() > 5) {
                 valid = true;
                 textInputLayoutPassword.setError(null);
             } else {
                 valid = false;
-                textInputLayoutPassword.setError("Password is to short!");
+                textInputLayoutPassword.setError("La contraseña debe contener al menos 5 caracteres");
             }
         }
 

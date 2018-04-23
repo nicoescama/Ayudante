@@ -21,6 +21,7 @@ public class Trip {
     public String driver;
     public String truck;
     public String gastos;
+    public Boolean finalizado;
 
     public Map<String, Boolean> stars = new HashMap<>();
 
@@ -72,6 +73,8 @@ public class Trip {
         return gastos;
     }
 
+    public Boolean getFinalizado() {return finalizado;}
+
     public Trip(String placa, String origen, String puntoCargue, String destino, String puntoDescargue, String anticipo, String fecha, String hora, String driver, String truck) {
         this.placa = placa;
         this.origen = origen;
@@ -84,9 +87,10 @@ public class Trip {
         this.driver = driver;
         this.truck = truck;
         this.gastos = "0";
+        this.finalizado = false;
     }
 
-    public Trip(String placa, String origen, String puntoCargue, String destino, String puntoDescargue, String anticipo, String fecha, String hora, String driver, String truck, String gastos) {
+    public Trip(String placa, String origen, String puntoCargue, String destino, String puntoDescargue, String anticipo, String fecha, String hora, String driver, String truck, String gastos,Boolean finalizado) {
         this.placa = placa;
         this.origen = origen;
         this.puntoCargue = puntoCargue;
@@ -98,6 +102,7 @@ public class Trip {
         this.driver = driver;
         this.truck = truck;
         this.gastos = gastos;
+        this.finalizado = finalizado;
     }
 
     public Trip(Trip value) {
@@ -118,6 +123,7 @@ public class Trip {
         result.put("driver",driver);
         result.put("truck",truck);
         result.put("gastos",gastos);
+        result.put("finalizado",finalizado);
         return result;
     }
 }

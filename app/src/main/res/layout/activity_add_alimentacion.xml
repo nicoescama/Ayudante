@@ -6,9 +6,19 @@
     android:layout_height="match_parent"
     tools:context="com.energismart.ayudante.AddAlimentacionActivity">
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/my_toolbarAddAlimentacion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
         android:layout_alignParentBottom="true">
         <ScrollView
             android:layout_width="fill_parent"
@@ -29,7 +39,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_margin="16dp"
-                    app:srcCompat="@drawable/logo" />
+                    app:srcCompat="@drawable/ic_restaurant_black_48dp" />
 
                 <android.support.design.widget.TextInputLayout
                     android:id="@+id/textInputLayoutLugarAlimentacion"
@@ -40,6 +50,7 @@
                     <android.support.design.widget.TextInputEditText
                         android:id="@+id/editTextLugarAlimentacion"
                         android:layout_width="match_parent"
+                        android:textSize="14pt"
                         android:layout_height="wrap_content"
                         android:hint="Lugar"
                         android:inputType="text" />
@@ -54,6 +65,7 @@
                     <android.support.design.widget.TextInputEditText
                         android:id="@+id/editTextCostoAlimentacion"
                         android:layout_width="match_parent"
+                        android:textSize="14pt"
                         android:layout_height="wrap_content"
                         android:hint="Costo total"
                         android:inputType="number" />
@@ -62,89 +74,64 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginRight="16dp"
+                    android:layout_marginBottom="16dp"
                     android:id="@+id/linearLayoutFechaAlimentacion"
                     android:orientation="horizontal">
                     <ImageView
                         android:id="@+id/today_alimentacion"
-                        android:layout_gravity="center"
+                        android:layout_gravity="left"
                         android:layout_width="wrap_content"
-                        android:layout_margin="16dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="48dp"
                         app:srcCompat="@drawable/ic_today_black_48dp" />
 
                     <TextView
                         android:layout_width="200dp"
                         android:layout_gravity="center"
-                        android:textSize="16pt"
+                        android:textSize="14pt"
                         android:layout_height="wrap_content"
                         android:id="@+id/textViewDateAA"/>
                 </LinearLayout>
 
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginBottom="16dp"
+                android:id="@+id/linearLayoutFotoAlimentacion"
+                android:orientation="horizontal">
+
+
                 <ImageView
                     android:id="@+id/photo_alimentacion"
                     android:adjustViewBounds="true"
-                    android:layout_gravity="center_horizontal"
                     android:layout_width="wrap_content"
-                    android:layout_margin="16dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="48dp"
                     app:srcCompat="@drawable/ic_photo_camera_black_48dp" />
 
 
-                <RelativeLayout
+                <ImageView
+                    android:id="@+id/photo_alimentacionTomada"
+                    android:layout_marginLeft="16dp"
+                    android:adjustViewBounds="true"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_centerInParent="true"
-                    android:id="@+id/AdicionesAlimentacion"
-                    android:orientation="vertical">
+                    android:layout_height="72dp"
+                    android:visibility="gone"
+                    app:srcCompat="@drawable/ic_photo_camera_black_48dp"/>
+
+            </LinearLayout>
+
+
 
                 <ImageView
                     android:id="@+id/photo_confirmAlimentacion"
                     android:adjustViewBounds="true"
                     android:layout_gravity="center_horizontal"
                     android:layout_width="wrap_content"
-                    android:layout_margin="16dp"
+                    android:layout_marginTop="16dp"
                     android:layout_height="wrap_content"
                     app:srcCompat="@drawable/ic_check_black_48dp" />
-
-                <ImageView
-                    android:id="@+id/photo_cancelAlimentacion"
-                    android:adjustViewBounds="true"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_width="wrap_content"
-                    android:layout_margin="16dp"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@+id/photo_confirmAlimentacion"
-                    app:srcCompat="@drawable/ic_cancel_black_48dp" />
-
-                </RelativeLayout>
-
-                <!--
-                <Button
-                    android:id="@+id/buttonAddAlimentacionAA"
-                    android:layout_marginTop="32dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:background="@color/colorPrimaryDark"
-                    android:text="Agregar"
-                    android:textColor="@android:color/white" />
-
-                <Button
-                    android:id="@+id/buttonBackAlimentacion"
-                    android:layout_marginTop="32dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:background="@color/colorAccent"
-                    android:layout_marginBottom="16dp"
-                    android:text="Atrás"
-                    android:textColor="@android:color/white" />
-
-                -->
 
             </LinearLayout>
         </ScrollView>

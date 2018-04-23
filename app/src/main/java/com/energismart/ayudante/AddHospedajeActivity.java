@@ -58,7 +58,7 @@ import java.util.Map;
     static final int REQUEST_TAKE_PHOTO = 1;
 
 
-        String costoChange, lugarChange, fechaChange,idChange;
+    String costoChange, lugarChange, fechaChange,idChange;
     boolean isChange=false;
 
     @Override
@@ -221,9 +221,8 @@ import java.util.Map;
         });
     }
 
-
     public void init(){
-        backImage = (ImageView) findViewById(R.id.photo_hospedaje);
+        backImage = (ImageView) findViewById(R.id.photo_cancelHospedaje);
         addHospedajeImage = (ImageView) findViewById(R.id.photo_confirmHospedaje);
         fechaImage = (ImageView) findViewById(R.id.today_hospedaje);
         photoImage = (ImageView) findViewById(R.id.photo_hospedaje);

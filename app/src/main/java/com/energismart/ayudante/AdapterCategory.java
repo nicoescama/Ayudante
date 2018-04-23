@@ -13,6 +13,13 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -62,13 +69,16 @@ public class AdapterCategory extends BaseAdapter {
             v = inf.inflate(R.layout.item_category, null);
         }
 
-        Category dir = items.get(position);
+        final Category dir = items.get(position);
         NumberFormat format = NumberFormat.getCurrencyInstance(Locale.US);
+        format.setMaximumFractionDigits(0);
 
         if(dir.getCategoryId().equals("hospedaje")||dir.getCategoryId().equals("peaje")
                 || dir.getCategoryId().equals("otro") || dir.getCategoryId().equals("gasolina")
                 || dir.getCategoryId().equals("alimentacion")) {
             TextView title = (TextView) v.findViewById(R.id.categoryCat);
+            final TextView texto2 = (TextView) v.findViewById(R.id.textoCat2);
+            texto2.setVisibility(View.GONE);
             TextView description = (TextView) v.findViewById(R.id.textoCat);
             ImageView imagen = (ImageView) v.findViewById(R.id.imageViewCat);
 
@@ -78,21 +88,59 @@ public class AdapterCategory extends BaseAdapter {
             imagen.setImageDrawable(dir.getImage());
 
         }
+        else if(dir.getCategoryId().equals("trip")){
+            final TextView title = (TextView) v.findViewById(R.id.categoryCat);
+            final TextView description = (TextView) v.findViewById(R.id.textoCat);
+            final ImageView imagen = (ImageView) v.findViewById(R.id.imageViewCat);
+            final TextView texto2 = (TextView) v.findViewById(R.id.textoCat2);
+            texto2.setVisibility(View.VISIBLE);
+
+            final DatabaseReference myRef = FirebaseDatabase.getInstance().getReference();
+            final String userKey = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+            myRef.child("users").child(userKey).child("trucks").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    title.setText("Ruta: "+dir.getLugar());
+                    description.setTextSize(26);
+                    texto2.setText("Fecha inicio: " + dir.getFecha() );
+                    texto2.setTextSize(26);
+                    imagen.setImageDrawable(dir.getImage());
+                    for(DataSnapshot truckActual : dataSnapshot.getChildren()) {
+                        if(truckActual.getKey().equals(dir.getTipo())) {
+                            description.setText("Placa: "+truckActual.child("placa").getValue(String.class));
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+
+
+        }
         else {
             TextView title = (TextView) v.findViewById(R.id.categoryCat);
             String[] datos2 = dir.getLugar().split("&");
             String lugarDar = "";
+            final TextView texto2 = (TextView) v.findViewById(R.id.textoCat2);
+            texto2.setVisibility(View.VISIBLE);
+            texto2.setTextSize(26);
             if (datos2.length == 2) {
                 lugarDar = datos2[1];
             } else {
                 lugarDar = dir.getLugar();
             }
-            title.setText(lugarDar + "  " + dir.getFecha());
+            title.setText("Lugar: "+lugarDar);
+            texto2.setText("Fecha: " + dir.getFecha());
 
             TextView description = (TextView) v.findViewById(R.id.textoCat);
             description.setTextSize(26);
             String[] datos = dir.getCosto().split("&");
-            description.setText(format.format(Integer.parseInt(datos[0])));
+            description.setText("Total: "+format.format(Integer.parseInt(datos[0])));
 
             ImageView imagen = (ImageView) v.findViewById(R.id.imageViewCat);
             imagen.setImageDrawable(dir.getImage());

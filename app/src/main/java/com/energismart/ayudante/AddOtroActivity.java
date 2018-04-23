@@ -5,11 +5,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -242,7 +244,22 @@ public class AddOtroActivity extends AppCompatActivity {
 
     public boolean validate(){
         boolean pasa = true;
+        String lugarAc= lugar.getText().toString();
+        String gasto = costo.getText().toString();
+        String fecha = fechaTextView.getText().toString();
+        String conceptoAc = concepto.getText().toString();
 
+        if(lugarAc.isEmpty() || gasto.isEmpty() || fecha.isEmpty() || conceptoAc.isEmpty()){
+            Snackbar snackbar = Snackbar.make(addImage, "Completar los espacios solicitados", Snackbar.LENGTH_INDEFINITE)
+                    .setAction("Aceptar", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                        }
+                    });
+            snackbar.setActionTextColor(Color.RED);
+            snackbar.show();
+            pasa = false;
+        }
 
         return pasa;
     }

@@ -40,44 +40,39 @@
             android:text="Saldo"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:id="@+id/boxSaldo">
+
 
         <TextView
             android:id="@+id/textViewGasto"
-            android:layout_marginTop="16dp"
+            android:layout_marginLeft="16dp"
             android:textSize="40dp"
-            android:layout_marginLeft="5dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="$400.000"
+            android:layout_gravity="center"
+            android:text="$800,000"
             android:textAppearance="?android:attr/textAppearanceMedium" />
-
-        <!--
-               <Button
-                   android:id="@+id/buttonDetalleGastos"
-                   android:layout_marginTop="16dp"
-                   android:layout_width="@dimen/button_width"
-                   android:layout_height="wrap_content"
-                   android:layout_gravity="center_horizontal"
-                   android:background="@color/colorPrimaryDark"
-                   android:text="Detalle de gastos"
-                   android:textColor="@android:color/white" />
-       -->
 
                <ImageView
                    android:id="@+id/photo_DetalleGastos"
-                   android:adjustViewBounds="true"
-                   android:layout_gravity="center"
+                   android:layout_toRightOf="@+id/textViewGasto"
                    android:layout_width="wrap_content"
-                   android:layout_margin="16dp"
-                   android:layout_height="wrap_content"
+                   android:layout_marginRight="16dp"
+                   android:layout_height="48dp"
                    app:srcCompat="@drawable/ic_details_black_48dp" />
+
+        </RelativeLayout>
 
 
                <TextView
                    android:id="@+id/textViewAgregarGasto"
                    android:layout_marginTop="16dp"
                    android:layout_marginLeft="5dp"
+                   android:layout_marginBottom="16dp"
                    android:layout_width="wrap_content"
                    android:layout_height="wrap_content"
                    android:textSize="38dp"
@@ -100,8 +95,8 @@
                        android:adjustViewBounds="true"
                        android:layout_gravity="center_horizontal"
                        android:layout_width="wrap_content"
-                       android:layout_margin="16dp"
-                       android:layout_height="wrap_content"
+                       android:layout_margin="24dp"
+                       android:layout_height="48dp"
                        app:srcCompat="@drawable/ic_restaurant_black_48dp" />
 
                    <ImageView
@@ -109,8 +104,8 @@
                        android:adjustViewBounds="true"
                        android:layout_gravity="center_horizontal"
                        android:layout_width="wrap_content"
-                       android:layout_margin="16dp"
-                       android:layout_height="wrap_content"
+                       android:layout_margin="24dp"
+                       android:layout_height="48dp"
                        android:layout_toRightOf="@+id/photo_addAlimentacion"
                        app:srcCompat="@drawable/ic_local_gas_station_black_48dp" />
 
@@ -120,8 +115,8 @@
                        android:adjustViewBounds="true"
                        android:layout_gravity="center_horizontal"
                        android:layout_width="wrap_content"
-                       android:layout_margin="16dp"
-                       android:layout_height="wrap_content"
+                       android:layout_margin="24dp"
+                       android:layout_height="48dp"
                        android:layout_toRightOf="@+id/photo_addGasolina"
                        app:srcCompat="@drawable/ic_peaje_48dp" />
 
@@ -130,8 +125,8 @@
                        android:adjustViewBounds="true"
                        android:layout_gravity="center_horizontal"
                        android:layout_width="wrap_content"
-                       android:layout_margin="16dp"
-                       android:layout_height="wrap_content"
+                       android:layout_margin="24dp"
+                       android:layout_height="48dp"
                        android:layout_below="@+id/photo_addAlimentacion"
                        app:srcCompat="@drawable/ic_hotel_black_48dp" />
 
@@ -140,114 +135,23 @@
                        android:adjustViewBounds="true"
                        android:layout_gravity="center_horizontal"
                        android:layout_width="wrap_content"
-                       android:layout_margin="16dp"
-                       android:layout_height="wrap_content"
+                       android:layout_margin="24dp"
+                       android:layout_height="48dp"
                        android:layout_toRightOf="@+id/photo_addGastoHospedaje"
                        android:layout_below="@+id/photo_addGasolina"
                        app:srcCompat="@drawable/ic_more_horiz_black_48dp" />
 
-
-
-
                </RelativeLayout>
-
-               <!--
-                      <Button
-                          android:id="@+id/buttonAddPeaje"
-                          android:layout_marginTop="16dp"
-                          android:layout_width="@dimen/button_width"
-                          android:layout_height="wrap_content"
-                          android:layout_gravity="center_horizontal"
-                          android:background="@color/colorPrimaryDark"
-                          android:text="Peaje"
-                          android:textColor="@android:color/white" />
-
-                      <Button
-                          android:id="@+id/buttonAddGasolina"
-                          android:layout_marginTop="16dp"
-                          android:layout_width="@dimen/button_width"
-                          android:layout_height="wrap_content"
-                          android:layout_gravity="center_horizontal"
-                          android:background="@color/colorPrimaryDark"
-                          android:text="Gasolina"
-                          android:textColor="@android:color/white" />
-
-                      <Button
-                          android:id="@+id/buttonAddHospedaje"
-                          android:layout_marginTop="16dp"
-                          android:layout_width="@dimen/button_width"
-                          android:layout_height="wrap_content"
-                          android:layout_gravity="center_horizontal"
-                          android:background="@color/colorPrimaryDark"
-                          android:text="Hospedaje"
-                          android:textColor="@android:color/white" />
-
-                      <Button
-                          android:id="@+id/buttonAlimentacion"
-                          android:layout_marginTop="16dp"
-                          android:layout_width="@dimen/button_width"
-                          android:layout_height="wrap_content"
-                          android:layout_gravity="center_horizontal"
-                          android:background="@color/colorPrimaryDark"
-                          android:text="Alimentación"
-                          android:textColor="@android:color/white" />
-
-                      <Button
-                          android:id="@+id/buttonAddOtro"
-                          android:layout_marginTop="16dp"
-                          android:layout_width="@dimen/button_width"
-                          android:layout_height="wrap_content"
-                          android:layout_gravity="center_horizontal"
-                          android:background="@color/colorPrimaryDark"
-                          android:text="Otro"
-                          android:textColor="@android:color/white" />
-                          -->
-
-
-
 
         <ImageView
             android:id="@+id/photo_continueFinish"
             android:adjustViewBounds="true"
             android:layout_gravity="center_horizontal"
             android:layout_width="wrap_content"
-            android:layout_margin="16dp"
-            android:layout_height="wrap_content"
-            app:srcCompat="@drawable/ic_send_black_48dp" />
+            android:layout_marginTop="16dp"
+            android:layout_height="48dp"
+            app:srcCompat="@drawable/ic_finish_trip" />
 
-
-        <ImageView
-            android:id="@+id/photo_ContinueBack"
-            android:adjustViewBounds="true"
-            android:layout_gravity="center_horizontal"
-            android:layout_width="wrap_content"
-            android:layout_margin="16dp"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/photo_continueFinish"
-            app:srcCompat="@drawable/ic_arrow_back_black_48dp" />
-
-<!--
-        <Button
-                   android:id="@+id/buttonFinalizarCT"
-                   android:layout_marginTop="32dp"
-                   android:layout_width="@dimen/button_width"
-                   android:layout_height="wrap_content"
-                   android:layout_gravity="center_horizontal"
-                   android:background="@color/colorPrimaryDark"
-                   android:text="Finalizar viaje"
-                   android:textColor="@android:color/white" />
-
-               <Button
-                   android:id="@+id/buttonBackCT"
-                   android:layout_marginTop="32dp"
-                   android:layout_width="@dimen/button_width"
-                   android:layout_marginBottom="16dp"
-                   android:layout_height="wrap_content"
-                   android:layout_gravity="center_horizontal"
-                   android:background="@color/colorAccent"
-                   android:text="Atrás"
-                   android:textColor="@android:color/white" />
-                   -->
            </LinearLayout>
            </ScrollView>
 

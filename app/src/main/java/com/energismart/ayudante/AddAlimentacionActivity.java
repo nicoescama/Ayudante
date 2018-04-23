@@ -1,26 +1,30 @@
 package com.energismart.ayudante;
 
-import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.FileProvider;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.text.format.Time;
 import android.view.ContextThemeWrapper;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -40,29 +44,31 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicMarkableReference;
 
 public class AddAlimentacionActivity extends AppCompatActivity {
 
     ImageView addImage;
-    ImageView cancelImage;
     EditText lugar, costo;
     TextView fechaTextView;
-    ImageView photo,fechaImagen;
+    ImageView photo,fechaImagen,photoTomada;
 
     String costoChange, lugarChange, fechaChange,idChange;
     boolean tieneFotoChange;
     boolean isChange=false;
+
+    Toolbar myToolbar;
+
 
     String mCurrentPhotoPath="";
     static final int REQUEST_TAKE_PHOTO = 1;
@@ -73,18 +79,13 @@ public class AddAlimentacionActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_alimentacion);
         init();
 
+        setSupportActionBar(myToolbar);
+
         if(getIntent().getExtras()!=null){
             updateFields();
         }
 
         mCurrentPhotoPath="";
-
-        cancelImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
-        });
 
         photo.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -214,7 +215,13 @@ public class AddAlimentacionActivity extends AppCompatActivity {
                                 HashMap<String, Object> result = new HashMap<>();
                                 result.put("lugar", lugar.getText().toString());
                                 result.put("fecha", fechaTextView.getText().toString());
-                                result.put("costo", costo.getText().toString());
+                                NumberFormat format = NumberFormat.getCurrencyInstance(Locale.US);
+                                format.setParseIntegerOnly(true);
+                                try {
+                                    result.put("costo", format.parse(costo.getText().toString()).toString());
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
+                                }
                                 if(!mCurrentPhotoPath.isEmpty()){
                                     result.put("foto",true);
                                 }
@@ -235,23 +242,163 @@ public class AddAlimentacionActivity extends AppCompatActivity {
             }
         });
 
+    costo.addTextChangedListener(new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            if (!s.toString().equals("")) {
+                NumberFormat format = NumberFormat.getCurrencyInstance(Locale.US);
+                format.setMaximumFractionDigits(0);
+                format.setParseIntegerOnly(true);
+                String numberString;
+                try {
+                    numberString = format.parse(s.toString()).toString();
+                } catch (ParseException e) {
+                    numberString = s.toString();
+                    if(numberString.length()>1) {
+                        costo.setText("");
+                        return;
+                    }
+                }
+                lugar.setText(numberString);
+                try {
+                    format.setMaximumFractionDigits(0);
+                    if (!format.format(Integer.parseInt(numberString)).equals(s.toString())) {
+                        int number = Integer.parseInt(numberString);
+                        format.setMaximumFractionDigits(0);
+                        String numberFormat = format.format(number);
+                        costo.setText(numberFormat);
+                        costo.setSelection(costo.getText().length());
+                        fechaTextView.setText(numberString);
+
+                    }
+                } catch (NumberFormatException e) {
+                    costo.setText("");
+                }
+            }
+        }
+    });
+
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_agregar_gasto, menu);
+        if(getIntent().getExtras()!=null){
+            MenuItem borrarItem = menu.findItem(R.id.action_delete_agregarGasto);
+            borrarItem.setVisible(true);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_back_agregarGasto) {
+            finish();
+        }
+        if (id == R.id.action_delete_agregarGasto){
+
+            final AlertDialog.Builder builder;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                builder = new AlertDialog.Builder(AddAlimentacionActivity.this, android.R.style.Theme_Material_Dialog_Alert);
+            } else {
+                builder = new AlertDialog.Builder(AddAlimentacionActivity.this);
+            }
+            builder.setTitle("Eliminar gasto")
+                    .setMessage("Se eliminará gasto")
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            final DatabaseReference myRef = FirebaseDatabase.getInstance().getReference();
+                            final String userKey = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                            final List<String> tripsGastos = new ArrayList<String>();
+                            final List<String> tripKey = new ArrayList<String>();
+                            final int gasto = Integer.parseInt(costoChange);
+                            final List<String> gastoAcumString = new ArrayList<String>();
+                            myRef.child("users").child(userKey).child("currentTrip").addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    for (DataSnapshot oneTrip : dataSnapshot.getChildren()) {
+                                        tripsGastos.add(oneTrip.child("gastos").getValue(String.class));
+                                        tripKey.add(oneTrip.getKey());
+                                        int gastoAcum = Integer.parseInt(tripsGastos.get(0));
+                                        gastoAcum = gastoAcum - gasto;
+                                        gastoAcumString.add(Integer.toString(gastoAcum));
+                                    }
+                                    String tKey = tripKey.get(0);
 
 
+                                    myRef.child("users").child(userKey).child("currentTrip").child(tKey).child("listaGastos").child("alimentacion").child(idChange).removeValue();
+                                    myRef.child("users").child(userKey).child("currentTrip").child(tKey).child("gastos").setValue(gastoAcumString.get(0));
+                                    myRef.child("users").child(userKey).child("trips").child(tKey).child("gastos").setValue(gastoAcumString.get(0));
+                                    myRef.child("users").child(userKey).child("trips").child(tKey).child("listaGastos").child("alimentacion").child(idChange).removeValue();
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            });
+                            Intent intent = new Intent(AddAlimentacionActivity.this, ContinueTripActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivity(intent);
+                            finish();
+
+                        }
+                    })
+                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            //do nothing
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert);
+            builder.show();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     public void init(){
         addImage = (ImageView) findViewById(R.id.photo_confirmAlimentacion);
-        cancelImage = (ImageView) findViewById(R.id.photo_cancelAlimentacion);
         fechaImagen = (ImageView) findViewById(R.id.today_alimentacion);
         lugar = (EditText) findViewById(R.id.editTextLugarAlimentacion);
         costo = (EditText) findViewById(R.id.editTextCostoAlimentacion);
         fechaTextView = (TextView) findViewById(R.id.textViewDateAA);
         photo = (ImageView) findViewById(R.id.photo_alimentacion);
+        photoTomada = (ImageView) findViewById(R.id.photo_alimentacionTomada);
+        myToolbar = (Toolbar) findViewById(R.id.my_toolbarAddAlimentacion);
+
+        setSupportActionBar(myToolbar);
+        getSupportActionBar().setSubtitle("Agregar gasto");
+        getSupportActionBar().setTitle("Alimentación");
+
     }
 
     public boolean validate(){
         boolean pasa = true;
+        String lugarAc= lugar.getText().toString();
+        String gasto = costo.getText().toString();
+        String fecha = fechaTextView.getText().toString();
 
+        if(lugarAc.isEmpty() || gasto.isEmpty() || fecha.isEmpty()){
+            Snackbar snackbar = Snackbar.make(addImage, "Completar los espacios solicitados", Snackbar.LENGTH_INDEFINITE)
+                    .setAction("Aceptar", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                        }
+                    });
+            snackbar.setActionTextColor(Color.RED);
+            snackbar.show();
+            pasa = false;
+        }
 
         return pasa;
     }
@@ -262,7 +409,6 @@ public class AddAlimentacionActivity extends AppCompatActivity {
         fechaChange = getIntent().getStringExtra("fecha");
         idChange = getIntent().getStringExtra("id");
         tieneFotoChange = getIntent().getExtras().getBoolean("tieneFoto");
-
         lugar.setText(lugarChange);
         fechaTextView.setText(fechaChange);
         costo.setText(costoChange);
@@ -343,7 +489,8 @@ public class AddAlimentacionActivity extends AppCompatActivity {
                     bitmapPic.compress(Bitmap.CompressFormat.PNG, 0 /* Ignored for PNGs */, blob);
                     byte[] bitmapdata = blob.toByteArray();
                     Bitmap myBitmap = BitmapFactory.decodeByteArray(bitmapdata, 0, bitmapdata.length);
-                    photo.setImageBitmap(myBitmap);
+                    photoTomada.setVisibility(View.VISIBLE);
+                    photoTomada.setImageBitmap(myBitmap);
                 }
             }
         }

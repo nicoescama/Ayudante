@@ -9,6 +9,8 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -31,7 +33,6 @@ import java.util.Map;
 
 public class ContinueTripActivity extends AppCompatActivity {
 
-    ImageView backImage;
     ImageView finalizarImage;
     ImageView newPeajeImage;
     ImageView newGasolinaImage;
@@ -46,47 +47,41 @@ public class ContinueTripActivity extends AppCompatActivity {
     FirebaseAuth mAuth;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_continue_trip);
 
         init();
 
         setSupportActionBar(myToolbar);
+
         mAuth = FirebaseAuth.getInstance();
         //get current user
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
-            currentUser = mAuth.getCurrentUser();
             getSupportActionBar().setSubtitle(currentUser.getEmail());
             mDatabase = FirebaseDatabase.getInstance().getReference();
-            mDatabase.child("users").child(currentUser.getUid()).child("currentTrip").addValueEventListener(new ValueEventListener() {
+            mDatabase.child("users").child(currentUser.getUid()).child("name").addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot snapshot) {
-                    for(DataSnapshot curr: snapshot.getChildren()) {
-                        String inicio = curr.child("origen").getValue().toString();
-                        String destino = curr.child("destino").getValue().toString();
-                        getSupportActionBar().setTitle(inicio+"-"+destino);
-                    }
+                    getSupportActionBar().setTitle(snapshot.getValue().toString());
                 }
-
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
                 }
             });
         }
+        else {
+            Intent intent = new Intent(this, LoginActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            finish();
+        }
 
-        backImage.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Intent intent = new Intent(ContinueTripActivity.this, MainActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(intent);
-                        finish();
-                    }
-                }
-        );
+
 
         newPeajeImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -169,8 +164,8 @@ public class ContinueTripActivity extends AppCompatActivity {
                                             thisTrip.getRef().removeValue();
                                             Map<String, Object> userValues = finishTrip.toMap();
                                             Map<String, Object> userUpdates = new HashMap<>();
-                                            DatabaseReference refTrips = myRef.child("users").child(userKey).child("trips");
-                                            userUpdates.put(userKey + "/trips/"+newKey, userValues);
+                                            myRef.child("users").child(userKey).child("trips").child(newKey).child("finalizado").setValue(true);
+                                            //userUpdates.put(userKey + "/trips/"+newKey, userValues);
                                             //refTrips.updateChildren(userUpdates);
                                         }
                                     }
@@ -199,8 +194,22 @@ public class ContinueTripActivity extends AppCompatActivity {
 
     }
 
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_continue, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_back_continue) {
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     public void init(){
-        backImage = (ImageView) findViewById(R.id.photo_ContinueBack);
         newPeajeImage = (ImageView) findViewById(R.id.photo_addPeaje);
         newGasolinaImage = (ImageView) findViewById(R.id.photo_addGasolina);
         newHospedajeImage = (ImageView) findViewById(R.id.photo_addGastoHospedaje);
@@ -227,6 +236,7 @@ public class ContinueTripActivity extends AppCompatActivity {
                     int gast = Integer.parseInt(tripsGastos.get(van-1));
                     int aunInt = antic - gast;
                     NumberFormat format = NumberFormat.getCurrencyInstance(Locale.US);
+                    format.setMaximumFractionDigits(0);
                     String presupuestoString = format.format(aunInt);
                     presupuestoTextview.setText(presupuestoString);
                 }
